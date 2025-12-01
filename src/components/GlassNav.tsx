@@ -26,7 +26,7 @@ export default function GlassNav({ className = "" }: GlassNavProps) {
       transition={{ duration: 0.25, ease: snappyEase }}
       className={`
         flex items-center
-        w-[1200px] h-[50px]
+        w-full h-[50px]
         px-[20px]
         rounded-full
         bg-transparent
