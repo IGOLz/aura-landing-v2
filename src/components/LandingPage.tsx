@@ -6,11 +6,12 @@ import { useState, useEffect } from "react";
 import GlassNav from "./GlassNav";
 import GlassButton from "./GlassButton";
 
-// Design dimensions - tighter to reduce dead space
-const DESIGN_WIDTH = 1360;
-const DESIGN_HEIGHT = 973;
+// Design dimensions - from Figma
+const DESIGN_WIDTH = 1340; // Main container width
+const DESIGN_HEIGHT = 953; // Main container height
+const DESIGN_MARGIN = 50; // Left/right margin from Figma
 const MIN_SCALE = 0.55; // Minimum scale for tablets (~768px)
-const MAX_SCALE = 1.5; // Scale up for large screens
+const MAX_SCALE = 2.0; // Scale up for large screens - increased to use more space
 const MOBILE_BREAKPOINT = 768; // Below this, show mobile version
 
 // Custom easing curve - punchy ease-out for responsive feel
@@ -81,9 +82,18 @@ export default function LandingPage() {
       
       setIsMobile(false);
       
-      const scaleX = width / DESIGN_WIDTH;
-      const scaleY = height / DESIGN_HEIGHT;
-      // Clamp scale between MIN and MAX for responsive behavior
+      // Calculate available width accounting for margins (50px on each side from Figma)
+      // Use responsive margins: minimum 50px, but allow up to 5% on very large screens
+      const marginSize = Math.max(50, Math.min(width * 0.05, 100)); // 50px min, 5% or 100px max
+      const availableWidth = width - (marginSize * 2);
+      const availableHeight = height - (DESIGN_MARGIN * 2);
+      
+      // Calculate scale based on available space
+      const scaleX = availableWidth / DESIGN_WIDTH;
+      const scaleY = availableHeight / DESIGN_HEIGHT;
+      
+      // Use the smaller scale to fit both dimensions, but allow scaling up on larger screens
+      // Increased MAX_SCALE to 2.0 to better utilize wide screens
       const newScale = Math.max(MIN_SCALE, Math.min(scaleX, scaleY, MAX_SCALE));
       setScale(newScale);
     };
@@ -283,7 +293,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen w-full bg-white flex items-center justify-center overflow-hidden">
-      {/* Scaling wrapper */}
+      {/* Scaling wrapper - scales container to use available space while maintaining margins */}
       <div 
         style={{
           width: DESIGN_WIDTH,
@@ -293,8 +303,8 @@ export default function LandingPage() {
         }}
       >
         {/* Positioned container within the design space */}
-        <div className="relative w-full h-full flex items-center justify-center p-[10px]">
-          {/* Main Container - 1340x953px with 20px border-radius */}
+        <div className="relative w-full h-full flex items-center justify-center">
+          {/* Main Container - 1340x953px with 20px border-radius, scales with viewport */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
