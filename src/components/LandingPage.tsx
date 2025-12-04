@@ -156,6 +156,7 @@ export default function LandingPage() {
                 width={91}
                 height={20}
                 priority
+                unoptimized
                 className="h-5 w-[91px] object-contain"
               />
             </motion.a>
@@ -179,6 +180,7 @@ export default function LandingPage() {
                   alt="X"
                   width={25}
                   height={25}
+                  unoptimized
                   className="w-[25px] h-[25px]"
                 />
               </motion.a>
@@ -196,6 +198,7 @@ export default function LandingPage() {
                   alt="Telegram"
                   width={25}
                   height={25}
+                  unoptimized
                   className="w-[25px] h-[25px]"
                 />
               </motion.a>

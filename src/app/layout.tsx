@@ -5,7 +5,11 @@ export const metadata: Metadata = {
   title: "Aura - Trade Everything",
   description: "Perps, sports, politics, & more",
   icons: {
-    icon: "/favicon.png",
+    icon: [
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon1.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/favicon.png",
   },
 };
 

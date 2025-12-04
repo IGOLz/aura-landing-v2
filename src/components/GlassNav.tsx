@@ -53,6 +53,7 @@ export default function GlassNav({ className = "" }: GlassNavProps) {
           width={91}
           height={20}
           priority
+          unoptimized
           className="h-[20px] w-[91px] object-contain"
         />
       </motion.a>
@@ -83,6 +84,7 @@ export default function GlassNav({ className = "" }: GlassNavProps) {
             alt="X"
             width={25}
             height={25}
+            unoptimized
             className="w-[25px] h-[25px]"
           />
         </motion.a>
@@ -107,6 +109,7 @@ export default function GlassNav({ className = "" }: GlassNavProps) {
             alt="Telegram"
             width={25}
             height={25}
+            unoptimized
             className="w-[25px] h-[25px]"
           />
         </motion.a>
