@@ -6,15 +6,13 @@ import { useState, useEffect } from "react";
 import GlassNav from "./GlassNav";
 import GlassButton from "./GlassButton";
 
-// Design dimensions - from Figma
+// Design dimensions - from Figma (content area only, not including margins)
 const DESIGN_WIDTH = 1340; // Main container width
-const DESIGN_HEIGHT = 924; // Main container height (Figma exact)
-const DESIGN_MARGIN = 50; // Match Figma design - consistent 50px margin on all sides
-// Total design size including margins (margin is part of the scaled design)
-const TOTAL_WIDTH = DESIGN_WIDTH + (DESIGN_MARGIN * 2);  // 1440
-const TOTAL_HEIGHT = DESIGN_HEIGHT + (DESIGN_MARGIN * 2); // 1024
+const DESIGN_HEIGHT = 924; // Main container height
+// Margin as percentage of viewport (Figma: ~3.5% of 1440 = 50px)
+const MARGIN_PERCENT = 0.025; // 2.5% margin on each side for a tighter fit
 const MIN_SCALE = 0.55; // Minimum scale for tablets (~768px)
-const MAX_SCALE = 2.0; // Scale up for large screens - increased to use more space
+const MAX_SCALE = 2.0; // Scale up for large screens
 const MOBILE_BREAKPOINT = 768; // Below this, show mobile version
 
 // Custom easing curve - punchy ease-out for responsive feel
@@ -85,10 +83,15 @@ export default function LandingPage() {
       
       setIsMobile(false);
 
-      // Calculate scale to fit entire design INCLUDING margins into viewport
-      // This ensures the margin scales proportionally with content (visual consistency)
-      const scaleX = width / TOTAL_WIDTH;
-      const scaleY = height / TOTAL_HEIGHT;
+      // Calculate available space after viewport-relative margins
+      const marginX = width * MARGIN_PERCENT;
+      const marginY = height * MARGIN_PERCENT;
+      const availableWidth = width - (marginX * 2);
+      const availableHeight = height - (marginY * 2);
+      
+      // Calculate scale to fit content in available space
+      const scaleX = availableWidth / DESIGN_WIDTH;
+      const scaleY = availableHeight / DESIGN_HEIGHT;
       
       // Use the smaller scale to fit both dimensions
       const newScale = Math.max(MIN_SCALE, Math.min(scaleX, scaleY, MAX_SCALE));
@@ -289,40 +292,30 @@ export default function LandingPage() {
   }
 
   return (
-    // Outer container fills viewport, centers the scaled design
+    // Outer container fills viewport, centers the content
     <div className="h-screen w-full overflow-hidden bg-white flex items-center justify-center">
-      {/* Wrapper sized to scaled TOTAL dimensions (including margins) */}
-      <div 
+      {/* Scaling wrapper - sized to fit with proper margins */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="rounded-[20px] overflow-hidden bg-neutral-700 relative"
         style={{
-          width: TOTAL_WIDTH * scale,
-          height: TOTAL_HEIGHT * scale,
+          width: DESIGN_WIDTH * scale,
+          height: DESIGN_HEIGHT * scale,
+          boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
         }}
       >
-        {/* Scaling wrapper - scales the entire design including margins */}
-        <div 
+        {/* Inner content at original size, scaled down */}
+        <div
+          className="relative"
           style={{
-            width: TOTAL_WIDTH,
-            height: TOTAL_HEIGHT,
+            width: DESIGN_WIDTH,
+            height: DESIGN_HEIGHT,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
           }}
         >
-          {/* White margin area - the 25px margin is now INSIDE the scaled area */}
-          <div className="relative w-full h-full bg-white">
-            {/* Blue content container positioned 25px from edges */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute rounded-[20px] overflow-hidden bg-neutral-700"
-              style={{
-                top: DESIGN_MARGIN,
-                left: DESIGN_MARGIN,
-                width: DESIGN_WIDTH,
-                height: DESIGN_HEIGHT,
-                boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-              }}
-            >
             {/* Background Image - positioned at left: -128px, full height */}
             <div 
               className="absolute top-0 h-full w-[1595px]"
@@ -432,10 +425,8 @@ export default function LandingPage() {
                 <p className="m-0">Apple Pay, Google Pay</p>
               </motion.div>
             </div>
-          </motion.div>
-        </div>
-      </div>
-      </div>
+          </div>
+        </motion.div>
     </div>
   );
 }
