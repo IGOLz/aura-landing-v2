@@ -9,7 +9,7 @@ import GlassButton from "./GlassButton";
 // Design dimensions - from Figma
 const DESIGN_WIDTH = 1340; // Main container width
 const DESIGN_HEIGHT = 953; // Main container height
-const DESIGN_MARGIN = 50; // Left/right margin from Figma
+const DESIGN_MARGIN = 25; // Match Figma design - consistent margin on all sides
 const MIN_SCALE = 0.55; // Minimum scale for tablets (~768px)
 const MAX_SCALE = 2.0; // Scale up for large screens - increased to use more space
 const MOBILE_BREAKPOINT = 768; // Below this, show mobile version
@@ -81,11 +81,9 @@ export default function LandingPage() {
       }
       
       setIsMobile(false);
-      
-      // Calculate available width accounting for margins (50px on each side from Figma)
-      // Use responsive margins: minimum 50px, but allow up to 5% on very large screens
-      const marginSize = Math.max(50, Math.min(width * 0.05, 100)); // 50px min, 5% or 100px max
-      const availableWidth = width - (marginSize * 2);
+
+      // Calculate available width accounting for fixed margins from Figma (50px on all sides)
+      const availableWidth = width - (DESIGN_MARGIN * 2);
       const availableHeight = height - (DESIGN_MARGIN * 2);
       
       // Calculate scale based on available space
@@ -292,16 +290,25 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-white flex items-center justify-center overflow-hidden">
-      {/* Scaling wrapper - scales container to use available space while maintaining margins */}
+    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
+      {/* White background frame - wraps content with consistent margins */}
       <div 
-        style={{
-          width: DESIGN_WIDTH,
-          height: DESIGN_HEIGHT,
-          transform: `scale(${scale})`,
-          transformOrigin: "center center",
+        className="bg-white rounded-[4px]"
+        style={{ 
+          padding: DESIGN_MARGIN,
+          width: DESIGN_WIDTH * scale + DESIGN_MARGIN * 2,
+          height: DESIGN_HEIGHT * scale + DESIGN_MARGIN * 2,
         }}
       >
+        {/* Scaling wrapper - scales container to use available space while maintaining margins */}
+        <div 
+          style={{
+            width: DESIGN_WIDTH,
+            height: DESIGN_HEIGHT,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+          }}
+        >
         {/* Positioned container within the design space */}
         <div className="relative w-full h-full flex items-center justify-center">
           {/* Main Container - 1340x953px with 20px border-radius, scales with viewport */}
@@ -425,6 +432,7 @@ export default function LandingPage() {
             </div>
           </motion.div>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ export default function GlassNav({ className = "" }: GlassNavProps) {
         ${className}
       `}
       style={{
-        width: 'min(1200px, calc(100vw - 140px))',
+        width: 1200, // Fixed width: 1340px container - 70px left margin - 70px right margin
       }}
     >
       {/* Logo */}
