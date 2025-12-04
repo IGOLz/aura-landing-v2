@@ -8,8 +8,11 @@ import GlassButton from "./GlassButton";
 
 // Design dimensions - from Figma
 const DESIGN_WIDTH = 1340; // Main container width
-const DESIGN_HEIGHT = 953; // Main container height
-const DESIGN_MARGIN = 25; // Match Figma design - consistent margin on all sides
+const DESIGN_HEIGHT = 924; // Main container height (Figma exact)
+const DESIGN_MARGIN = 50; // Match Figma design - consistent 50px margin on all sides
+// Total design size including margins (margin is part of the scaled design)
+const TOTAL_WIDTH = DESIGN_WIDTH + (DESIGN_MARGIN * 2);  // 1440
+const TOTAL_HEIGHT = DESIGN_HEIGHT + (DESIGN_MARGIN * 2); // 1024
 const MIN_SCALE = 0.55; // Minimum scale for tablets (~768px)
 const MAX_SCALE = 2.0; // Scale up for large screens - increased to use more space
 const MOBILE_BREAKPOINT = 768; // Below this, show mobile version
@@ -82,16 +85,12 @@ export default function LandingPage() {
       
       setIsMobile(false);
 
-      // Calculate available width accounting for fixed margins from Figma (50px on all sides)
-      const availableWidth = width - (DESIGN_MARGIN * 2);
-      const availableHeight = height - (DESIGN_MARGIN * 2);
+      // Calculate scale to fit entire design INCLUDING margins into viewport
+      // This ensures the margin scales proportionally with content (visual consistency)
+      const scaleX = width / TOTAL_WIDTH;
+      const scaleY = height / TOTAL_HEIGHT;
       
-      // Calculate scale based on available space
-      const scaleX = availableWidth / DESIGN_WIDTH;
-      const scaleY = availableHeight / DESIGN_HEIGHT;
-      
-      // Use the smaller scale to fit both dimensions, but allow scaling up on larger screens
-      // Increased MAX_SCALE to 2.0 to better utilize wide screens
+      // Use the smaller scale to fit both dimensions
       const newScale = Math.max(MIN_SCALE, Math.min(scaleX, scaleY, MAX_SCALE));
       setScale(newScale);
     };
@@ -290,37 +289,40 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
-      {/* White background frame - wraps content with consistent margins */}
+    // Outer container fills viewport, centers the scaled design
+    <div className="h-screen w-full overflow-hidden bg-white flex items-center justify-center">
+      {/* Wrapper sized to scaled TOTAL dimensions (including margins) */}
       <div 
-        className="bg-white rounded-[4px]"
-        style={{ 
-          padding: DESIGN_MARGIN,
-          width: DESIGN_WIDTH * scale + DESIGN_MARGIN * 2,
-          height: DESIGN_HEIGHT * scale + DESIGN_MARGIN * 2,
+        style={{
+          width: TOTAL_WIDTH * scale,
+          height: TOTAL_HEIGHT * scale,
         }}
       >
-        {/* Scaling wrapper - scales container to use available space while maintaining margins */}
+        {/* Scaling wrapper - scales the entire design including margins */}
         <div 
           style={{
-            width: DESIGN_WIDTH,
-            height: DESIGN_HEIGHT,
+            width: TOTAL_WIDTH,
+            height: TOTAL_HEIGHT,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
           }}
         >
-        {/* Positioned container within the design space */}
-        <div className="relative w-full h-full flex items-center justify-center">
-          {/* Main Container - 1340x953px with 20px border-radius, scales with viewport */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative w-[1340px] h-[953px] rounded-[20px] overflow-hidden bg-neutral-700"
-            style={{
-              boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-            }}
-          >
+          {/* White margin area - the 25px margin is now INSIDE the scaled area */}
+          <div className="relative w-full h-full bg-white">
+            {/* Blue content container positioned 25px from edges */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="absolute rounded-[20px] overflow-hidden bg-neutral-700"
+              style={{
+                top: DESIGN_MARGIN,
+                left: DESIGN_MARGIN,
+                width: DESIGN_WIDTH,
+                height: DESIGN_HEIGHT,
+                boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+              }}
+            >
             {/* Background Image - positioned at left: -128px, full height */}
             <div 
               className="absolute top-0 h-full w-[1595px]"
@@ -400,12 +402,12 @@ export default function LandingPage() {
                 />
               </motion.div>
 
-              {/* Bottom Left Text - "Powered by:" at left: 70px, top: 859px */}
+              {/* Bottom Left Text - "Powered by:" at left: 70px, top: 830px */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
-                className="absolute left-[70px] top-[859px] text-white text-[23px] font-normal whitespace-nowrap"
+                className="absolute left-[70px] top-[830px] text-white text-[23px] font-normal whitespace-nowrap"
                 style={{
                   fontFamily: "'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                   lineHeight: "normal",
@@ -415,12 +417,12 @@ export default function LandingPage() {
                 <p className="m-0">Hyperliquid, Polymarket</p>
               </motion.div>
 
-              {/* Bottom Right Text - right-aligned at left: 1270px (from right edge), top: 854px */}
+              {/* Bottom Right Text - right-aligned at left: 1270px (from right edge), top: 835px */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
-                className="absolute left-[1270px] top-[854px] -translate-x-full text-white text-[23px] font-normal text-right whitespace-nowrap"
+                className="absolute left-[1270px] top-[835px] -translate-x-full text-white text-[23px] font-normal text-right whitespace-nowrap"
                 style={{
                   fontFamily: "'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                   lineHeight: "normal",
